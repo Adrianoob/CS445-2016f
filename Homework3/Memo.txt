@@ -1,0 +1,3 @@
+Number of lines of code from source code from all 3 parts: 200
+Test coverage: 40%
+  
