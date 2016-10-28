@@ -1,0 +1,15 @@
+1. create maven webapp archetype
+2. add jersey dependency
+3. web.xml is changed
+4. web.xml specify jersey <init-param> according to Jersey tutorial
+5. in pom.xml, the <build> tag specify the root url
+6. url will be [localhost:8080/<build>/<url-pattern]/...]
+
+7. For Intellij IDE, open Project Structure->Module->Source, change src and test root directory
+
+... // something happens here
+
+n. deploy (move) the .war architect to Tomcat container
+
+warning:
+1. because in web.xml, the url pattern is [/*], which overlaps the namespace for index.jsp, therefore, index.jsp won't show unless <url-pattern> is changed to something other than [/*].

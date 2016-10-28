@@ -1,0 +1,2 @@
+1. association between Person and other roles (namely Farmer, Customer and Manager) instead of inheritance
+   so as to reuse data in Person object. For example, a customer and farmer and manager with the same Person.
