@@ -1,5 +1,6 @@
 package priv.jj.lf2u;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -11,5 +12,10 @@ public class HelloWorldTest {
     @Produces(MediaType.TEXT_HTML)
     public String sayHtmlHello() {
         return "Hello, hello! ";
+    }
+
+    @POST
+    public String tell(String msg) {
+        return "Why " + msg + " ?";
     }
 }

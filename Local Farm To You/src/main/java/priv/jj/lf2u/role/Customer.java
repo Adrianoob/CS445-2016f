@@ -9,6 +9,13 @@ public class Customer implements PersonInterface {
     private String street;
     private Person person;
 
+    public Customer(String n, String e, String p, String stree, String zi) {
+        person = new Person(n, e, p);
+        street = stree;
+        zip = zi;
+        // FIXME: 10/27/16 here needs a way to generate id
+    }
+
     public String getPersonName() {
         return person.getName();
     }
