@@ -1,6 +1,8 @@
 package priv.jj.lf2u.persistence;
 
 
+import priv.jj.lf2u.role.Farmer;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -14,7 +16,7 @@ public class FarmerSerialization implements FarmerIOInterface {
         fileName = "FarmerObjects.ser";
     }
 
-    public void addFarmer(Hashtable<String, String> farmer) {
+    public void addFarmer(Farmer farmer) {
         File file = new File(fileName);
         if (fileExists(fileName)) {
             try (AppendingObjectOutputStream out = new AppendingObjectOutputStream(new FileOutputStream(file, true))) {

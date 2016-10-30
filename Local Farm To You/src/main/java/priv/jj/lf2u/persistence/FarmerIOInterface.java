@@ -16,5 +16,4 @@ public interface FarmerIOInterface {
 
     // add new farmer to storage
     void addFarmer(Farmer farmer);
-
 }
