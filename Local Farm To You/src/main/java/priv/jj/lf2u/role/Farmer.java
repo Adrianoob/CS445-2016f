@@ -1,9 +1,11 @@
 package priv.jj.lf2u.role;
 
+import java.io.Serializable;
+
 /**
  * Farmer
  */
-public class Farmer implements PersonInterface {
+public class Farmer implements PersonInterface, Serializable {
     private String fid; // farmer id
     private String name; // farm name
     private String address; // farm address
@@ -22,10 +24,7 @@ public class Farmer implements PersonInterface {
         phone = farm_phone;
         web = webb;
         delivers_to = new String[zips.length];
-        for (int i = 0; i < zips.length; i++) {
-            delivers_to[i] = zips[i];
-        }
-        // FIXME: 10/27/16: need a way to generate fid
+        System.arraycopy(zips, 0, delivers_to, 0, zips.length);
     }
 
     public void setFarmerInfo(String n, String e, String p,
@@ -36,9 +35,7 @@ public class Farmer implements PersonInterface {
         phone = farm_phone;
         web = webb;
         delivers_to = new String[zips.length];
-        for (int i = 0; i < zips.length; i++) {
-            delivers_to[i] = zips[i];
-        }
+        System.arraycopy(zips, 0, delivers_to, 0, zips.length);
     }
 
     public String getPersonName() {
