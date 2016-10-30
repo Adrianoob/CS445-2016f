@@ -1,5 +1,6 @@
 package priv.jj.lf2u.persistence;
 
+import priv.jj.lf2u.role.Farmer;
 import priv.jj.lf2u.system.FarmerSystem;
 
 import java.util.Hashtable;
@@ -14,6 +15,6 @@ public interface FarmerIOInterface {
     void loadFarmers();
 
     // add new farmer to storage
-    void addFarmer(Hashtable<String, String> farmer);
+    void addFarmer(Farmer farmer);
 
 }
