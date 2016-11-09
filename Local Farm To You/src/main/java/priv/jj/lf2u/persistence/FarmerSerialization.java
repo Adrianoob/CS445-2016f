@@ -2,52 +2,74 @@ package priv.jj.lf2u.persistence;
 
 
 import priv.jj.lf2u.role.Farmer;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 /**
  * Created by adrianoob on 10/30/16.
  */
 public class FarmerSerialization implements FarmerIOInterface {
-    private String fileName;
+    private final static String fileName = "FarmerObjects.ser";
+    private ArrayList<Farmer> farmers;
+
     public FarmerSerialization() {
-        fileName = "FarmerObjects.ser";
+        farmers = new ArrayList<>();
+    }
+
+    public Farmer [] readFarmersFromDisk() {
+        farmers.clear();
+        File file = new File(fileName);
+
+        if (file.exists() && !file.isDirectory()) {
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
+                int size = in.readInt();
+                for (int i = 0; i < size; i++) {
+                    farmers.add((Farmer) in.readObject());
+                }
+            } catch (IOException|ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return farmers.toArray(new Farmer[farmers.size()]);
     }
 
     public void addFarmer(Farmer farmer) {
-        File file = new File(fileName);
-        if (fileExists(fileName)) {
-            try (AppendingObjectOutputStream out = new AppendingObjectOutputStream(new FileOutputStream(file, true))) {
-                out.writeObject(farmer);
-            } catch (IOException i) {
-                i.printStackTrace();
-            }
-        } else {
-            try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file, true))) {
-                out.writeObject(farmer);
-            } catch (IOException i) {
-                i.printStackTrace();
-            }
-        }
+        farmers.add(farmer);
+        write();
     }
 
-    public void loadFarmers() {
+    public void setFarmer(Farmer farmer) {
+        Farmer f_to_change = null;
+        for (Farmer f : farmers) {
+            if (farmer.getFid().equals(f.getFid())) {
+                f_to_change =f;
+                break;
+            }
+        }
+        farmers.remove(f_to_change);
+        farmers.add(farmer);
+        write();
+    }
+
+    public void clearStoredData() {
+        farmers.clear();
+        try {
+            File f = new File(fileName);
+            f.delete();
+            if (f.exists() && !f.isDirectory())
+                System.out.println("EXISTS");
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void write() {
         File file = new File(fileName);
-        ArrayList<Hashtable<String, String>> list = new ArrayList<>();
-        try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))) {
-            Hashtable table = (Hashtable<String, String>) in.readObject();
-            list.add(table);
+        try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(file))) {
+            out.writeInt(farmers.size());
+            for (Farmer f : farmers) {
+                out.writeObject(f);
+            }
         } catch (IOException i) {
             i.printStackTrace();
-        } catch (ClassNotFoundException c) {
-            c.printStackTrace();
         }
-    }
-
-    public boolean fileExists(String file_name) {
-        File file = new File(file_name);
-        return file.exists() && !file.isDirectory();
     }
 }
