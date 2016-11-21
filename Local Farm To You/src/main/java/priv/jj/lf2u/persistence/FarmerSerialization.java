@@ -1,7 +1,7 @@
 package priv.jj.lf2u.persistence;
 
 
-import priv.jj.lf2u.role.Farmer;
+import priv.jj.lf2u.entity.Farmer;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class FarmerSerialization implements FarmerIOInterface {
         farmers = new ArrayList<>();
     }
 
-    public Farmer [] readFarmersFromDisk() {
+    public Farmer [] readFarmersData() {
         farmers.clear();
         File file = new File(fileName);
 
@@ -56,8 +56,6 @@ public class FarmerSerialization implements FarmerIOInterface {
         try {
             File f = new File(fileName);
             f.delete();
-            if (f.exists() && !f.isDirectory())
-                System.out.println("EXISTS");
         } catch (Exception e) { e.printStackTrace(); }
     }
 

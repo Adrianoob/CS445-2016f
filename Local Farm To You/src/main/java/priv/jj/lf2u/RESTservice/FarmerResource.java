@@ -1,7 +1,7 @@
 package priv.jj.lf2u.RESTservice;
 import com.google.gson.Gson;
 import priv.jj.lf2u.dataFormatting.FarmerData;
-import priv.jj.lf2u.role.Farmer;
+import priv.jj.lf2u.entity.Farmer;
 import priv.jj.lf2u.system.FarmerSystem;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -22,6 +22,15 @@ public class FarmerResource {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response addFarmer(String str) {
         FarmerData f = new Gson().fromJson(str, FarmerData.class);
+        Hashtable<String, Object> data = new Hashtable<>();
+        data.put("personName", f.getPersonName());
+        data.put("personEmail", f.getPersonEmail());
+        data.put("personPhone", f.getPersonPhone());
+        data.put("farmName", f.getFarmName());
+        data.put("farmAddress", f.getFarmAddress());
+        data.put("farmPhone", f.getFarmPhone());
+        data.put("farmWeb", f.getFarmWeb());
+        data.put("deliversTo", f.getDelivers_to());
         String fid = fs.addFarmer(f.getPersonName(), f.getPersonEmail(), f.getPersonPhone(),
                 f.getFarmName(), f.getFarmAddress(), f.getFarmPhone(), f.getFarmWeb(), f.getDelivers_to());
         URI uri = UriBuilder.fromUri("http://localhost:8080/lf2u/farmers/{fid}").resolveTemplate("fid", fid).build();

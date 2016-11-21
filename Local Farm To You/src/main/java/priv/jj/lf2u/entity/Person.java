@@ -1,4 +1,4 @@
-package priv.jj.lf2u.role;
+package priv.jj.lf2u.entity;
 
 /**
  * Created by adrianoob on 10/27/16.

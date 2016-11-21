@@ -1,6 +1,6 @@
 package priv.jj.lf2u.dataFormatting;
 
-import priv.jj.lf2u.role.Farmer;
+import priv.jj.lf2u.entity.Farmer;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -18,7 +18,7 @@ public class FarmerData {
     public FarmerData(Farmer f) {
         farm_info = new FarmInfo(f.getName(), f.getAddress(), f.getPhone(), f.getWeb());
         personal_info = new PersonalInfo(f.getPersonName(), f.getPersonEmail(), f.getPersonPhone());
-        delivers_to = f.getDelivers_to();
+        delivers_to = f.getDeliversTo();
     }
 
 

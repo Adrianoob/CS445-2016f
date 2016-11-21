@@ -1,4 +1,4 @@
-package priv.jj.lf2u.role;
+package priv.jj.lf2u.entity;
 
 import java.io.Serializable;
 import java.util.Hashtable;
@@ -12,25 +12,17 @@ public class Farmer implements Serializable {
     private String address; // farm address
     private String phone; // farm phone
     private String web;
-    private String [] delivers_to;
+    private String [] deliversTo;
     private String personName;
     private String personEmail;
     private String personPhone;
+    private double deliveryCharge;
 //    private Person person;
-
-    public Farmer() {}
 
     public Farmer(String n, String e, String p,
                   String farmer_name, String addres, String farm_phone, String webb, String [] zips) {
-        personName = n;
-        personEmail = e;
-        personPhone = p;
-        name = farmer_name;
-        address = addres;
-        phone = farm_phone;
-        web = webb;
-        delivers_to = new String[zips.length];
-        System.arraycopy(zips, 0, delivers_to, 0, zips.length);
+        setFarmerInfo(n, e, p, farmer_name, addres, farm_phone, webb, zips);
+        deliveryCharge = 0;
     }
 
     public void setFarmerInfo(String n, String e, String p,
@@ -42,8 +34,8 @@ public class Farmer implements Serializable {
         address = addres;
         phone = farm_phone;
         web = webb;
-        delivers_to = new String[zips.length];
-        System.arraycopy(zips, 0, delivers_to, 0, zips.length);
+        deliversTo = new String[zips.length];
+        System.arraycopy(zips, 0, deliversTo, 0, zips.length);
     }
 
     public Hashtable<String, String> createHashTable() {
@@ -58,15 +50,15 @@ public class Farmer implements Serializable {
         table.put("personPhone",personPhone);
 
         String zip = "";
-        if (delivers_to.length > 0) {
-            zip = delivers_to[0];
-            if (delivers_to.length > 1) {
-                for (int i = 1; i < delivers_to.length; i++) {
-                    zip = zip + "," + delivers_to[i];
+        if (deliversTo.length > 0) {
+            zip = deliversTo[0];
+            if (deliversTo.length > 1) {
+                for (int i = 1; i < deliversTo.length; i++) {
+                    zip = zip + "," + deliversTo[i];
                 }
             }
         }
-        table.put("delivers_to", zip);
+        table.put("deliversTo", zip);
 
         return table;
     }
@@ -99,8 +91,8 @@ public class Farmer implements Serializable {
         return web;
     }
 
-    public String [] getDelivers_to() {
-        return delivers_to;
+    public String [] getDeliversTo() {
+        return deliversTo;
     }
 
 
@@ -113,11 +105,19 @@ public class Farmer implements Serializable {
     }
 
     public boolean deliversTo(String zip) {
-        for (String z : delivers_to) {
+        for (String z : deliversTo) {
             if (z.equals(zip))
                 return true;
         }
         return false;
+    }
+
+    public void setDeliveryCharge(double deliveryCharge) {
+        this.deliveryCharge = deliveryCharge;
+    }
+
+    public double getDeliveryCharge() {
+        return this.deliveryCharge;
     }
 
 

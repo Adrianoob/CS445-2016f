@@ -2,9 +2,10 @@ package priv.jj.lf2u.system;
 
 import priv.jj.lf2u.persistence.FarmerIOInterface;
 import priv.jj.lf2u.persistence.FarmerSerialization;
-import priv.jj.lf2u.role.Farmer;
+import priv.jj.lf2u.entity.Farmer;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 /**
  * Created by adrianoob on 10/28/16.
@@ -21,23 +22,20 @@ public enum FarmerSystem {
         // things to do the first time initialization
         farmers = new ArrayList();
         farmerIO = new FarmerSerialization();
-        readFarmersDataIfExists();
-        initializeIdGenerator();
+        id_counter = 100;
+
+        loadStoredData();
     }
 
-    private void readFarmersDataIfExists() {
-        // read farmer data
-        // read max int id generated
-    }
-
-    private void initializeIdGenerator() {
-        id_counter = 100; // for now
+    private void loadStoredData() {
+        Farmer [] farmers = farmerIO.readFarmersData();
         for (Farmer f : farmers) {
+            this.farmers.add(f);
             int id = Integer.parseInt(f.getFid());
-            if (id > id_counter)
-                id_counter = id;
+            if (id > id_counter) id_counter = id;
         }
     }
+
 
     /* Public Methods */
     /** add a new farmer and return its newly generated id
@@ -57,6 +55,24 @@ public enum FarmerSystem {
         String fid = "" + ++id_counter;
         farmer.setFid(fid);
         farmers.add(farmer);
+        farmerIO.addFarmer(farmer);
+        return fid;
+    }
+
+    public String addFarmer(Hashtable<String, Object> data) {
+        String fid = "" + ++id_counter;
+        String n = (String) data.get("personName");
+        String e = (String) data.get("personEmail");
+        String p = (String) data.get("personPhone");
+        String fn = (String) data.get("farmName");
+        String ad = (String) data.get("farmAddress");
+        String fp = (String) data.get("farmPhone");
+        String fw = (String) data.get("farmWeb");
+        String [] dt = (String []) data.get("deliversTo");
+        Farmer farmer = new Farmer(n,e,p,fn,ad,fp,fw,dt);
+        farmer.setFid(fid);
+        farmers.add(farmer);
+        farmerIO.addFarmer(farmer);
         return fid;
     }
 
@@ -78,10 +94,10 @@ public enum FarmerSystem {
         Farmer farmer = farmOfFid(fid);
         if (farmer == null)
             return false;
-        else {
-            farmer.setFarmerInfo(n,e,p,farmer_name,addres,farm_phone,webb,zips);
-            return true;
-        }
+
+        farmer.setFarmerInfo(n,e,p,farmer_name,addres,farm_phone,webb,zips);
+        farmerIO.setFarmer(farmer);
+        return true;
     }
 
     public Farmer farmOfFid(String fid) {
@@ -101,4 +117,16 @@ public enum FarmerSystem {
 
         return choice.toArray(new Farmer[choice.size()]);
     }
+
+    /* IO Method */
+    public void setFarmerIO(FarmerIOInterface fio) {
+        farmerIO = fio;
+    }
+
+    public void clearStoredData() {
+        farmers.clear();
+        farmerIO.clearStoredData();
+        id_counter = 100;
+    }
+
 }
