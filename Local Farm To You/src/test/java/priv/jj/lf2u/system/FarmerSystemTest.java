@@ -1,9 +1,8 @@
 package priv.jj.lf2u.system;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import priv.jj.lf2u.role.Farmer;
+import priv.jj.lf2u.entity.Farmer;
 
 import java.util.Hashtable;
 
@@ -13,12 +12,13 @@ import static org.junit.Assert.*;
  * Created by adrianoob on 11/8/16.
  */
 public class FarmerSystemTest {
-    FarmerSystem fs = FarmerSystem.INSTANCE;
+    private FarmerSystem fs = FarmerSystem.INSTANCE;
+    private boolean last_test = false;
 
     @Test
     public void addFarmerTest() {
         /* set up */
-        fs.clearStoredDate();
+        fs.clearStoredData();
 
         /* test */
         String fid = fs.addFarmer("name3", "email3@aa.com", "3333333333",
@@ -41,7 +41,7 @@ public class FarmerSystemTest {
     @Test
     public void getAFarmerTest() {
         /* set up */
-        fs.clearStoredDate();
+        fs.clearStoredData();
         fs.addFarmer("name1", "email1@aa.com", "1111111111",
                 "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
 
@@ -56,7 +56,7 @@ public class FarmerSystemTest {
     @Test
     public void putFarmerTest() {
         /* set up */
-        fs.clearStoredDate();
+        fs.clearStoredData();
         fs.addFarmer("name1", "email1@aa.com", "1111111111",
                 "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
 
@@ -74,7 +74,7 @@ public class FarmerSystemTest {
     @Test
     public void zipTest() {
         /* set up */
-        fs.clearStoredDate();
+        fs.clearStoredData();
         fs.addFarmer("name1", "email1@aa.com", "1111111111",
                 "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
         fs.addFarmer("name2", "email2@aa.com", "2222222222",
@@ -90,17 +90,21 @@ public class FarmerSystemTest {
     }
 
     @Test
-    public void dataIsPersistentTest() {
+    public void persistenceTest() {
         Farmer farmer = fs.farmOfFid("101");
         assertEquals("farmer stored in local is found", "name1", farmer.getPersonName());
+
+        last_test = true;
     }
 
     @After
     public void leave_something() {
-        fs.clearStoredDate();
-        fs.addFarmer("name1", "email1@aa.com", "1111111111",
-                "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
-        fs.addFarmer("name2", "email2@aa.com", "2222222222",
-                "farm2", "address2", "2222222223", "www.farm2.com", new String[]{"60616", "60606"});
+        fs.clearStoredData();
+        if (!last_test) {
+            fs.addFarmer("name1", "email1@aa.com", "1111111111",
+                    "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
+            fs.addFarmer("name2", "email2@aa.com", "2222222222",
+                    "farm2", "address2", "2222222223", "www.farm2.com", new String[]{"60616", "60606"});
+        }
     }
 }
