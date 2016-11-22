@@ -17,7 +17,6 @@ public class Farmer implements Serializable {
     private String personEmail;
     private String personPhone;
     private double deliveryCharge;
-//    private Person person;
 
     public Farmer(String n, String e, String p,
                   String farmer_name, String addres, String farm_phone, String webb, String [] zips) {

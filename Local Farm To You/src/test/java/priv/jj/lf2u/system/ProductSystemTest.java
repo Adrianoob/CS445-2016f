@@ -39,22 +39,22 @@ public class ProductSystemTest {
     @Test
     public void add_getProductTest() {
         ps.clearStoredData();
-        String fspid = ps.addProduct("101", "103", "note", "start", "end", "price", "unit", "image");
+        String fspid = ps.addProduct("101", "103", "note", "", "", 10, "unit", "image");
         assertEquals("fspid is correct1", "101", fspid);
 
-        FarmStoreProduct p = ps.productOfId_newestVersion(fspid);
+        FarmStoreProduct p = ps.productOfId_newestVersion(fspid, "101");
         assertEquals("catalog is correct", "Tomatoes", p.getName());
 
-        fspid = ps.addProduct("101", "101", "note", "start", "end", "price", "unit", "image");
+        fspid = ps.addProduct("101", "101", "note", "", "", 11, "unit", "image");
         assertEquals("fspid is correct2", "102", fspid);
 
 
 
         /* failure test */
-        fspid = ps.addProduct("103", "101", "note", "start", "end", "price", "unit", "image");
+        fspid = ps.addProduct("103", "101", "note", "", "", 12, "unit", "image");
         assertEquals("fail as fid not exist", null, fspid);
 
-        fspid = ps.addProduct("102", "100", "note", "start", "end", "price", "unit", "image");
+        fspid = ps.addProduct("102", "100", "note", "", "", 13, "unit", "image");
         assertEquals("fail as gpcid not exist", null, fspid);
     }
 
@@ -62,24 +62,24 @@ public class ProductSystemTest {
     public void changeProductTest() {
         // set up
         ps.clearStoredData();
-        ps.addProduct("101", "103", "note", "start", "end", "price", "unit", "image"); // fspid = 101
-        ps.addProduct("101", "101", "note", "start", "end", "price", "unit", "image"); // fspid = 102
+        ps.addProduct("101", "103", "note", "", "", 14, "unit", "image"); // fspid = 101
+        ps.addProduct("101", "101", "note", "", "", 15, "unit", "image"); // fspid = 102
 
         // test
-        Hashtable<String, String> data = new Hashtable<>();
-        data.put("price", "12");
+        Hashtable<String, Object> data = new Hashtable<>();
+        data.put("price", new Double(12));
         assertEquals("effective product first change", true, ps.changeProductOfId("101", "101", data));
-        FarmStoreProduct pr = ps.productOfId_newestVersion("101");
-        assertEquals("product version is 1", 1, pr.getVersion());
-        assertEquals("price changed", "12", pr.getPrice());
+        FarmStoreProduct pr = ps.productOfId_newestVersion("101", "101");
+        assertEquals("product version is 0", 0, pr.getVersion());
+        assertEquals("price changed", 12 , pr.getPrice(), 0);
 
-        data.put("price", "1.2");
+        data.put("price", 1.2);
         data.put("product_unit", "kg");
 
         assertEquals("effective product second change", true, ps.changeProductOfId("101", "101", data));
-        pr = ps.productOfId_newestVersion("101");
-        assertEquals("product version is 2", 2, pr.getVersion());
-        assertEquals("price changed again", "1.2", pr.getPrice());
+        pr = ps.productOfId_newestVersion("101", "101");
+        assertEquals("product version is 2", 0, pr.getVersion()); // 0 is newest version
+        assertEquals("price changed again", 1.2, pr.getPrice(), 0);
         assertEquals("unit changed", "kg", pr.getProduct_unit());
 
         assertEquals("failure in product change for non-existing fspid",
@@ -88,19 +88,20 @@ public class ProductSystemTest {
                 false, ps.changeProductOfId("102", "101", data));
 
         // test version
-        pr = ps.productOfId_version("101", 1);
-        assertEquals("old version has correct price", "12", pr.getPrice());
+        int version = pr.getVersion();
+        pr = ps.productOfId_version("101", "101", version);
+        assertEquals("old version has correct price", 1.2, pr.getPrice(), 0);
     }
 
     @Test
     public void productsOfFidTest() {
         // set up
         ps.clearStoredData();
-        ps.addProduct("101", "103", "note", "start", "end", "price", "unit", "image"); // fid=101, fspid=101
-        ps.addProduct("101", "101", "note", "start", "end", "price", "unit", "image"); // fid=101, fspid=102
-        ps.addProduct("101", "102", "note", "start", "end", "price", "unit", "image"); // fid=101, fspid=103
-        ps.addProduct("102", "101", "note", "start", "end", "price", "unit", "image"); // fid=102, fspid=104
-        ps.addProduct("102", "102", "note", "start", "end", "price", "unit", "image"); // fid=102, fspid=105
+        ps.addProduct("101", "103", "note", "", "", 20, "unit", "image"); // fid=101, fspid=101
+        ps.addProduct("101", "101", "note", "", "", 20, "unit", "image"); // fid=101, fspid=102
+        ps.addProduct("101", "102", "note", "", "", 20, "unit", "image"); // fid=101, fspid=103
+        ps.addProduct("102", "101", "note", "", "", 20, "unit", "image"); // fid=102, fspid=104
+        ps.addProduct("102", "102", "note", "", "", 20, "unit", "image"); // fid=102, fspid=105
 
         // test
         FarmStoreProduct [] pls = ps.getProductsOfFid("101");
@@ -117,9 +118,9 @@ public class ProductSystemTest {
 
     @Test
     public void persistenceTest() {
-        assertNotEquals("old data exists1", null, ps.productOfId_newestVersion("101"));
-        assertNotEquals("old data exists2", null, ps.productOfId_newestVersion("102"));
-        assertEquals("no more old data", null, ps.productOfId_newestVersion("103"));
+        assertNotEquals("old data exists1", null, ps.productOfId_newestVersion("101", "101"));
+        assertNotEquals("old data exists2", null, ps.productOfId_newestVersion("102", "101"));
+        assertEquals("no more old data", null, ps.productOfId_newestVersion("103", "101"));
         last_test = true;
     }
 
@@ -131,8 +132,8 @@ public class ProductSystemTest {
             catalog.clearStoredDate();
         } else {
             ps.clearStoredData();
-            ps.addProduct("101", "103", "note", "start", "end", "price", "unit", "image"); // fspid = 101
-            ps.addProduct("101", "101", "note", "start", "end", "price", "unit", "image"); // fspid = 102
+            ps.addProduct("101", "103", "note", "", "", 20, "unit", "image"); // fspid = 101
+            ps.addProduct("101", "101", "note", "", "", 20, "unit", "image"); // fspid = 102
         }
     }
 

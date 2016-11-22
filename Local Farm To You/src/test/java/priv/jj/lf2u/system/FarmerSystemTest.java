@@ -46,10 +46,10 @@ public class FarmerSystemTest {
                 "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
 
         /* test */
-        Farmer farmer = fs.farmOfFid("100");
+        Farmer farmer = fs.farmerOfFid("100");
         assertEquals("farmer doesn't exist", null, farmer);
 
-        farmer = fs.farmOfFid("101");
+        farmer = fs.farmerOfFid("101");
         assertEquals("farmer found", "name1", farmer.getPersonName());
     }
 
@@ -67,7 +67,7 @@ public class FarmerSystemTest {
         s = fs.setFarmer("101","1", "1", "1", "1", "1", "1", "1", new String[]{});
         assertEquals("correct feedback from successful put farmer", true, s);
 
-        Farmer farmer = fs.farmOfFid("101");
+        Farmer farmer = fs.farmerOfFid("101");
         assertEquals("farmer has been changed", "1", farmer.getPersonName());
     }
 
@@ -91,8 +91,11 @@ public class FarmerSystemTest {
 
     @Test
     public void persistenceTest() {
-        Farmer farmer = fs.farmOfFid("101");
+        Farmer farmer = fs.farmerOfFid("101");
         assertEquals("farmer stored in local is found", "name1", farmer.getPersonName());
+        farmer = fs.farmerOfFid("102");
+        assertEquals("farmer stored in local is found", "1", farmer.getPersonName());
+
 
         last_test = true;
     }
@@ -105,6 +108,7 @@ public class FarmerSystemTest {
                     "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"});
             fs.addFarmer("name2", "email2@aa.com", "2222222222",
                     "farm2", "address2", "2222222223", "www.farm2.com", new String[]{"60616", "60606"});
+            fs.setFarmer("102","1", "1", "1", "1", "1", "1", "1", new String[]{});
         }
     }
 }

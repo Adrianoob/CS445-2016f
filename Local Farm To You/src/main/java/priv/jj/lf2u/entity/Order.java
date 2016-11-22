@@ -1,29 +1,30 @@
 package priv.jj.lf2u.entity;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 /**
  * Created by adrianoob on 11/20/16.
  */
-public class Order {
+public class Order implements Serializable {
     private String oid;
     private Customer customer;
     private Farmer farmer;
     private String delivery_note;
-    private FarmStoreProduct [] fspidList;
+    private FarmStoreProduct [] productList;
     private double [] amountList;
-    private int [] versionList;
+//    private int [] versionList;
     private int status;
     private Calendar orderDate;
     private Calendar plannedDeliveryDate;
     private Calendar actuallyDeliveryDate;
     private double deliveryCharge;
 
-    public Order(Customer customer, Farmer farmer, String delivery_note, FarmStoreProduct[] fspidList, double[] amountList) {
+    public Order(Customer customer, Farmer farmer, String delivery_note, FarmStoreProduct[] productList, double[] amountList) {
         this.customer = customer;
         this.farmer = farmer;
         this.delivery_note = delivery_note;
-        this.fspidList = fspidList;
+        this.productList = productList;
         this.amountList = amountList;
         this.status = Order.OPEN;
         orderDate = Calendar.getInstance();
@@ -84,13 +85,13 @@ public class Order {
         this.amountList = amountList;
     }
 
-    public int[] getVersionList() {
-        return versionList;
-    }
-
-    public void setVersionList(int[] versionList) {
-        this.versionList = versionList;
-    }
+//    public int[] getVersionList() {
+//        return versionList;
+//    }
+//
+//    public void setVersionList(int[] versionList) {
+//        this.versionList = versionList;
+//    }
 
     public double getDeliveryCharge() {
         return deliveryCharge;
@@ -129,5 +130,13 @@ public class Order {
         int mm = actuallyDeliveryDate.get(Calendar.MONTH) + 1;
         int dd = actuallyDeliveryDate.get(Calendar.DATE);
         return yyyy + "" + mm + "" + dd;
+    }
+
+    public double productTotal() {
+        double sum = 0;
+        for (int i = 0; i < productList.length; i++) {
+            sum += productList[i].getPrice() * amountList[i];
+        }
+        return sum;
     }
 }

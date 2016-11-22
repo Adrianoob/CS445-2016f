@@ -39,15 +39,6 @@ public class FarmerSerialization implements FarmerIOInterface {
     }
 
     public void setFarmer(Farmer farmer) {
-        Farmer f_to_change = null;
-        for (Farmer f : farmers) {
-            if (farmer.getFid().equals(f.getFid())) {
-                f_to_change =f;
-                break;
-            }
-        }
-        farmers.remove(f_to_change);
-        farmers.add(farmer);
         write();
     }
 

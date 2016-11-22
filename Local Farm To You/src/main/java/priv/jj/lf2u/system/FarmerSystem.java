@@ -91,7 +91,7 @@ public enum FarmerSystem {
     public boolean setFarmer(String fid,
                              String n, String e, String p,
                              String farmer_name, String addres, String farm_phone, String webb, String [] zips) {
-        Farmer farmer = farmOfFid(fid);
+        Farmer farmer = farmerOfFid(fid);
         if (farmer == null)
             return false;
 
@@ -100,7 +100,7 @@ public enum FarmerSystem {
         return true;
     }
 
-    public Farmer farmOfFid(String fid) {
+    public Farmer farmerOfFid(String fid) {
         for (Farmer farmer : farmers) {
             if (farmer.getFid().equals(fid))
                 return farmer;
@@ -109,6 +109,10 @@ public enum FarmerSystem {
     }
 
     public Farmer[] farmersOfZip(String zip) {
+        // if zip is null, return all farmers
+        if (zip == null)
+            return farmers.toArray(new Farmer[farmers.size()]);
+
         ArrayList<Farmer> choice = new ArrayList<Farmer>();
         for (Farmer farmer : farmers) {
             if (farmer.deliversTo(zip))
@@ -116,6 +120,14 @@ public enum FarmerSystem {
         }
 
         return choice.toArray(new Farmer[choice.size()]);
+    }
+
+    public boolean updateDeliveryCharge(String fid, double deliv) {
+        Farmer far = farmerOfFid(fid);
+        if (far == null) return false;
+
+        far.setDeliveryCharge(deliv);
+        return true;
     }
 
     /* IO Method */

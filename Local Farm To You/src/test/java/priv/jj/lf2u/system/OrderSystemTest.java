@@ -1,13 +1,17 @@
 package priv.jj.lf2u.system;
 
 import static org.junit.Assert.*;
+
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import priv.jj.lf2u.entity.FarmStoreProduct;
 import priv.jj.lf2u.entity.Order;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Hashtable;
 
 /**
  * Created by adrianoob on 11/20/16.
@@ -21,8 +25,18 @@ public class OrderSystemTest {
     String today;
     String tmr;
 
+    boolean last_test = false;
+
     @Before
     public void setup() {
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        Calendar calendar = Calendar.getInstance();
+        today = format.format(calendar.getTime());
+        calendar.roll(Calendar.DATE, 1);
+        tmr = format.format(calendar.getTime());
+    }
+
+    private void loadingData() {
         fs.clearStoredData();
         fs.addFarmer("farmer1", "email1@aa.com", "1111111111",
                 "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"}); // fid = 101
@@ -34,23 +48,18 @@ public class OrderSystemTest {
         ca.addCatalog("Eggplant"); // gcpid = 102;
 
         ps.clearStoredData();
-        ps.addProduct("101", "102", "note", "start", "end", "price", "unit", "image"); // fspid = 101
-        ps.addProduct("101", "101", "note", "start", "end", "price", "unit", "image"); // fspid = 102
+        ps.addProduct("101", "102", "note", "start", "end", 12, "unit", "image"); // fspid = 101
+        ps.addProduct("101", "101", "note", "start", "end", 25, "unit", "image"); // fspid = 102
 
         cs.clearStoredData();
         cs.addCustomer("cus1", "cus1e@aa.com", "1111111111", "Michigen Ave.", "60616"); // cid = 101
         cs.addCustomer("cus2", "cus2e@aa.com", "2222222222", "Michigen road.", "60616"); // cid = 102
-
-        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
-        Calendar calendar = Calendar.getInstance();
-        today = format.format(calendar.getTime());
-        calendar.roll(Calendar.DATE, 1);
-        tmr = format.format(calendar.getTime());
     }
 
     @Test
     public void testCreateOrder() {
         // set up
+        loadingData();
         os.clearStoredData();
         os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
         os.addOrder("101", "101", "N/A", new String[] {"101"}, new double[] {0.5}); // oid = 102
@@ -69,6 +78,7 @@ public class OrderSystemTest {
     @Test
     public void testGetOrders() {
         // set up
+        loadingData();
         os.clearStoredData();
         os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
         os.addOrder("101", "101", "N/A", new String[] {"101"}, new double[] {0.5}); // oid = 102
@@ -91,9 +101,13 @@ public class OrderSystemTest {
 
     @Test
     public void testCancel_Confirm() {
+        // set up
+        loadingData();
+        os.clearStoredData();
         os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
         os.addOrder("101", "101", "N/A", new String[] {"101"}, new double[] {0.5}); // oid = 102
 
+        // test
         Order or1 = os.getOrder("101", "101");
         assertEquals("succeed to cancel", true, or1.cancelOrder());
         assertEquals("cancelled item has correct status", Order.CANCELLED, or1.getStatus());
@@ -110,5 +124,47 @@ public class OrderSystemTest {
         assertEquals("cancelled item won't change its status", Order.CANCELLED, or1.getStatus());
         assertEquals("confirmed item won't change its status", Order.DELIVERED, or2.getStatus());
 
+    }
+
+    @Test
+    public void testCalculatingProductTotal() {
+        // set up
+        loadingData();
+        os.clearStoredData();
+        os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        Order order = os.getOrder("101", "101");
+
+        // test
+        assertEquals("total price is correct", 62, order.productTotal(), 0);
+
+        Hashtable<String, Object> data = new Hashtable<>();
+        data.put("price", new Double(13));
+        ps.changeProductOfId("101", "101", data);
+        assertEquals("total price won't be affected by changing price", 62, order.productTotal(), 0);
+
+        os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        order = os.getOrder("102", "101");
+        assertEquals("new price will affect new order's total", 63, order.productTotal(), 0);
+    }
+
+    @Test
+    public void persistenceTest() {
+        Order order = os.getOrder("101", "101");
+        assertEquals("order from last time exists", order.getFid(), "101");
+        last_test = true;
+    }
+
+    @After
+    public void leave_something() {
+        if (last_test) {
+            fs.clearStoredData();
+            ps.clearStoredData();
+            ca.clearStoredDate();
+            cs.clearStoredData();
+            os.clearStoredData();
+        } else {
+            os.clearStoredData();
+            os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        }
     }
 }

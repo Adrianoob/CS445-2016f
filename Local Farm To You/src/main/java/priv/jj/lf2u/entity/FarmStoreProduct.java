@@ -1,6 +1,8 @@
 package priv.jj.lf2u.entity;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by adrianoob on 10/27/16.
@@ -10,25 +12,39 @@ public class FarmStoreProduct implements Serializable {
     private String fid; // farmer id
     private String name; // product name
     private String note; // description
-    private String start_date;
-    private String end_date;
-    private String price;
+    private Calendar start_date;
+    private Calendar end_date;
+    private double price;
     private String product_unit;
     private String image;
-    private int version;
+    private int version; // 0 -> new, other -> old
 
     public FarmStoreProduct(String fid, String name, String note,
                             String start_date, String end_date,
-                            String price, String product_unit, String image) {
+                            double price, String product_unit, String image) {
         this.fid = fid;
         this.name = name;
         this.note = note;
-        this.start_date = start_date;
-        this.end_date = end_date;
+        if (start_date.equals("")) {
+            this.start_date = Calendar.getInstance();
+            this.start_date.set(Calendar.DAY_OF_YEAR, 0);
+        } else { this.start_date = convertDate(start_date); }
+        if (end_date.equals("")) {
+            this.end_date = Calendar.getInstance();
+            this.end_date.set(Calendar.DATE, 31);
+            this.end_date.set(Calendar.MONTH, 11);
+        } else { this.end_date = convertDate(end_date); }
         this.price = price;
         this.product_unit = product_unit;
         this.image = image;
         this.version = 0;
+    }
+
+    private Calendar convertDate(String str) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.MONTH, Integer.parseInt(str.substring(0, 2)) - 1);
+        cal.set(Calendar.DATE, Integer.parseInt(str.substring(3, 5)));
+        return cal;
     }
 
 
@@ -65,26 +81,35 @@ public class FarmStoreProduct implements Serializable {
     }
 
     public String getStart_date() {
-        return start_date;
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+        return format.format(this.start_date.getTime());
     }
 
     public void setStart_date(String start_date) {
-        this.start_date = start_date;
+        if (start_date.equals("")) {
+            this.start_date = Calendar.getInstance();
+            this.start_date.set(Calendar.DAY_OF_YEAR, 0);
+        } else { this.start_date = convertDate(start_date); }
     }
 
     public String getEnd_date() {
-        return end_date;
+        SimpleDateFormat format = new SimpleDateFormat("MM-dd");
+        return format.format(this.end_date.getTime());
     }
 
     public void setEnd_date(String end_date) {
-        this.end_date = end_date;
+        if (end_date.equals("")) {
+            this.end_date = Calendar.getInstance();
+            this.end_date.set(Calendar.DATE, 31);
+            this.end_date.set(Calendar.MONTH, 11);
+        } else { this.end_date = convertDate(end_date); }
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -106,8 +131,12 @@ public class FarmStoreProduct implements Serializable {
 
     public int getVersion() { return this.version; }
 
+    public void setVersion(int version) {
+        this.version = version;
+    }
+
     public FarmStoreProduct copy() {
-        FarmStoreProduct copy = new FarmStoreProduct(this.fid, this.name, this.note, this.start_date, this.end_date,
+        FarmStoreProduct copy = new FarmStoreProduct(this.fid, this.name, this.note, this.getStart_date(), this.getEnd_date(),
                 this.price, this.product_unit, this.image);
         copy.version = this.version + 1;
         copy.fspid = this.fspid;

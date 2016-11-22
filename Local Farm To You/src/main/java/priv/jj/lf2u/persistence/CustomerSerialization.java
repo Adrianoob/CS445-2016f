@@ -40,15 +40,6 @@ public class CustomerSerialization implements CustomerIOInterface {
 
     @Override
     public void setCustomer(Customer customer) {
-        Customer c_to_change = null;
-        for (Customer c : customers) {
-            if (customer.getCid().equals(c.getCid())) {
-                c_to_change =c;
-                break;
-            }
-        }
-        customers.remove(c_to_change);
-        customers.add(customer);
         write();
     }
 
