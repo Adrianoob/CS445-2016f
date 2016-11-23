@@ -22,5 +22,4 @@ public class ManagerSystemTest {
     public void getAccountByMidTest() {
         assertEquals("manager with correct name", "Admin", ms.managerOfMid("0").getName());
     }
-
 }

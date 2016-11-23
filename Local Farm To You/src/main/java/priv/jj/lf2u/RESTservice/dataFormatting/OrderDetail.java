@@ -1,4 +1,4 @@
-package priv.jj.lf2u.dataFormatting;
+package priv.jj.lf2u.RESTservice.dataFormatting;
 
 /**
  * Created by adrianoob on 11/22/16.

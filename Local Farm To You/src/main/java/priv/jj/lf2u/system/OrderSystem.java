@@ -1,6 +1,5 @@
 package priv.jj.lf2u.system;
 
-import com.sun.org.apache.xpath.internal.operations.Or;
 import priv.jj.lf2u.entity.Customer;
 import priv.jj.lf2u.entity.FarmStoreProduct;
 import priv.jj.lf2u.entity.Farmer;
@@ -26,7 +25,7 @@ public enum OrderSystem {
     private int id_counter;
     private OrderIOInterface orderIO;
 
-    private OrderSystem() {
+    OrderSystem() {
         ps = ProductSystem.INSTANCE;
         fs = FarmerSystem.INSTANCE;
         cs = CustomerSystem.INSTANCE;
@@ -77,7 +76,7 @@ public enum OrderSystem {
         return oid;
     }
 
-    public Order [] ordersTodayByFid(String fid) {
+    public Order [] ordersToDeliverTodayByFid(String fid) {
         ArrayList<Order> list = new ArrayList<>();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         String today = format.format(Calendar.getInstance().getTime());
@@ -87,7 +86,7 @@ public enum OrderSystem {
         return list.toArray(new Order[list.size()]);
     }
 
-    public Order [] ordersTomorrowByFid(String fid) {
+    public Order [] ordersToDeliverTomorrowByFid(String fid) {
         ArrayList<Order> list = new ArrayList<>();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         Calendar calendar = Calendar.getInstance();
@@ -184,17 +183,19 @@ public enum OrderSystem {
         ArrayList<Order> list = new ArrayList<>();
         SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
         Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DATE, 1); calendar.roll(Calendar.DATE, -1);
+        calendar.set(Calendar.DATE, 1); calendar.add(Calendar.DATE, -1);
         int end = Integer.parseInt((format.format(calendar.getTime())));
         calendar.set(Calendar.DATE, 1);
         int start = Integer.parseInt((format.format(calendar.getTime())));
-
         for (Order o : orders) {
             int date = Integer.parseInt(o.getOrderDate());
             if (date >= start && date <= end) list.add(o);
         }
         return list.toArray(new Order[list.size()]);
     }
+
+    /* IO Method */
+    public void setOrderIO(OrderIOInterface io) { orderIO = io; }
 
     public void clearStoredData() {
         orders.clear();

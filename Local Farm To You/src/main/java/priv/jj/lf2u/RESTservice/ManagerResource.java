@@ -150,7 +150,7 @@ public class ManagerResource {
 
             int order_placed = orders.length;
             int delivered = 0, cancelled = 0, open = 0;
-            double total_revenue = 0, total_product_revenue = 0, total_delivery_revenue = 0;
+            double total_product_revenue = 0, total_delivery_revenue = 0;
             for (Order o : orders) {
                 if (o.getStatus() == Order.OPEN) open++;
                 else if (o.getStatus() == Order.CANCELLED) cancelled++;
@@ -160,7 +160,7 @@ public class ManagerResource {
                     total_delivery_revenue += o.getDeliveryCharge();
                 }
             }
-            total_revenue = total_product_revenue + total_delivery_revenue;
+            double total_revenue = total_product_revenue + total_delivery_revenue;
 
             SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
             Calendar calendar = Calendar.getInstance();
@@ -192,7 +192,7 @@ public class ManagerResource {
 
             int order_placed = orders.length;
             int delivered = 0, cancelled = 0, open = 0;
-            double total_revenue = 0, total_product_revenue = 0, total_delivery_revenue = 0;
+            double total_product_revenue = 0, total_delivery_revenue = 0;
             for (Order o : orders) {
                 if (o.getStatus() == Order.OPEN) open++;
                 else if (o.getStatus() == Order.CANCELLED) cancelled++;
@@ -202,7 +202,7 @@ public class ManagerResource {
                     total_delivery_revenue += o.getDeliveryCharge();
                 }
             }
-            total_revenue = total_product_revenue + total_delivery_revenue;
+            double total_revenue = total_product_revenue + total_delivery_revenue;
 
             LinkedHashMap<String, Object> report = new LinkedHashMap<>();
             report.put("mrid", "4");

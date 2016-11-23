@@ -1,7 +1,5 @@
 package priv.jj.lf2u.RESTservice;
 
-import priv.jj.lf2u.entity.FarmStoreProduct;
-import priv.jj.lf2u.entity.Manager;
 import priv.jj.lf2u.system.*;
 
 import javax.ws.rs.GET;

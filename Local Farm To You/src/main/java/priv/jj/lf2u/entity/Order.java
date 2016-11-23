@@ -2,9 +2,7 @@ package priv.jj.lf2u.entity;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
-import java.util.Set;
 
 /**
  * Created by adrianoob on 11/20/16.

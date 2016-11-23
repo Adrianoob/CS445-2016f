@@ -18,7 +18,7 @@ public enum FarmerSystem {
     private FarmerIOInterface farmerIO;
 
     /* Constructor and Helpers */
-    private FarmerSystem() {
+    FarmerSystem() {
         // things to do the first time initialization
         farmers = new ArrayList();
         farmerIO = new FarmerSerialization();
@@ -113,7 +113,7 @@ public enum FarmerSystem {
         if (zip == null)
             return farmers.toArray(new Farmer[farmers.size()]);
 
-        ArrayList<Farmer> choice = new ArrayList<Farmer>();
+        ArrayList<Farmer> choice = new ArrayList<>();
         for (Farmer farmer : farmers) {
             if (farmer.deliversTo(zip))
                 choice.add(farmer);

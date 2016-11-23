@@ -5,6 +5,7 @@ import priv.jj.lf2u.persistence.ManagerIOInterface;
 import priv.jj.lf2u.persistence.ManagerSerialization;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by adrianoob on 11/21/16.
@@ -14,7 +15,7 @@ public enum ManagerSystem {
     private ArrayList<Manager> managers;
     private ManagerIOInterface managerIO;
 
-    private ManagerSystem() {
+    ManagerSystem() {
         managers = new ArrayList<>();
         managerIO = new ManagerSerialization();
         loadStoredData();
@@ -23,9 +24,7 @@ public enum ManagerSystem {
     private void loadStoredData() {
         managerIO.clearStoredData();
         Manager [] mngrs = managerIO.readStoredData();
-        for (Manager m : mngrs) {
-            managers.add(m);
-        }
+        Collections.addAll(managers, mngrs);
     }
 
     public Manager [] getManagers() {
@@ -38,4 +37,7 @@ public enum ManagerSystem {
         }
         return null;
     }
+
+    /* IO Method */
+    public void setManagerIO(ManagerIOInterface io) { managerIO = io; }
 }

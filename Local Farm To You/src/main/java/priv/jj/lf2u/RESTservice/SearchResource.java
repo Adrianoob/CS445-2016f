@@ -1,10 +1,8 @@
 package priv.jj.lf2u.RESTservice;
 
 import com.google.gson.Gson;
-import priv.jj.lf2u.dataFormatting.FarmerData;
-import priv.jj.lf2u.dataFormatting.FarmerReportOrderFormat;
-import priv.jj.lf2u.dataFormatting.OrderData;
-import priv.jj.lf2u.dataFormatting.OrderInfo;
+import priv.jj.lf2u.RESTservice.dataFormatting.FarmerData;
+import priv.jj.lf2u.RESTservice.dataFormatting.OrderInfo;
 import priv.jj.lf2u.entity.Customer;
 import priv.jj.lf2u.entity.Farmer;
 import priv.jj.lf2u.entity.Order;

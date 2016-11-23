@@ -14,7 +14,7 @@ public enum CatalogSystem {
     private int id_counter;
     private CatalogIOInterface catalogIO;
 
-    private CatalogSystem() {
+    CatalogSystem() {
         catalogIO = new CatalogSerialization();
         id_counter = 100;
 
@@ -35,7 +35,7 @@ public enum CatalogSystem {
         Set<String> keys = catalog.keySet();
         ArrayList<Map<String, String>> list = new ArrayList<>();
         for (String k : keys) {
-            Map<String, String> a = new java.util.LinkedHashMap<String, String>();
+            Map<String, String> a = new java.util.LinkedHashMap<>();
             a.put("gcpid", k);
             a.put("name", catalog.get(k));
             list.add(a);
@@ -63,6 +63,9 @@ public enum CatalogSystem {
         catalogIO.changeCatalog(gcpid, name);
         return true;
     }
+
+    /* IO Method */
+    public void setCatalogIO(CatalogIOInterface io) { catalogIO = io; }
 
     public void clearStoredDate() {
         catalog.clear();

@@ -16,7 +16,7 @@ public enum CustomerSystem {
     private int id_counter;
     private CustomerIOInterface customerIO;
 
-    private CustomerSystem() {
+    CustomerSystem() {
         customers = new ArrayList<>();
         id_counter = 100;
         customerIO = new CustomerSerialization();
@@ -78,6 +78,9 @@ public enum CustomerSystem {
         }
         return cus.toArray(new Customer[cus.size()]);
     }
+
+    /* IO Method */
+    public void setCustomerIO(CustomerIOInterface io) { customerIO = io; }
 
     public void clearStoredData() {
         id_counter = 100;

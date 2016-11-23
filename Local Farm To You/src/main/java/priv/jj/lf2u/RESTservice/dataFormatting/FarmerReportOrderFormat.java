@@ -1,4 +1,4 @@
-package priv.jj.lf2u.dataFormatting;
+package priv.jj.lf2u.RESTservice.dataFormatting;
 
 import priv.jj.lf2u.entity.Order;
 

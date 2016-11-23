@@ -1,8 +1,8 @@
 package priv.jj.lf2u.RESTservice;
 
 import com.google.gson.Gson;
-import priv.jj.lf2u.dataFormatting.OrderData;
-import priv.jj.lf2u.dataFormatting.OrderInfo;
+import priv.jj.lf2u.RESTservice.dataFormatting.OrderData;
+import priv.jj.lf2u.RESTservice.dataFormatting.OrderInfo;
 import priv.jj.lf2u.entity.Customer;
 import priv.jj.lf2u.entity.Order;
 import priv.jj.lf2u.system.CustomerSystem;

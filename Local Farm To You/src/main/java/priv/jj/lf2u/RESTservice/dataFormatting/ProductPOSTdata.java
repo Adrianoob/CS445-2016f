@@ -1,22 +1,20 @@
-package priv.jj.lf2u.dataFormatting;
+package priv.jj.lf2u.RESTservice.dataFormatting;
 
 /**
  * Created by adrianoob on 11/21/16.
  */
-public class ProductGETdata {
-    private String fspid;
-    private String name;
-    private String notes;
+public class ProductPOSTdata {
+    private String gcpid;
+    private String note;
     private String start_date;
     private String end_date;
     private double price;
     private String product_unit;
     private String image;
 
-    public ProductGETdata(String fspid, String name, String notes, String start_date, String end_date, double price, String product_unit, String image) {
-        this.fspid = fspid;
-        this.name = name;
-        this.notes = notes;
+    public ProductPOSTdata(String gcpid, String note, String start_date, String end_date, double price, String product_unit, String image) {
+        this.gcpid = gcpid;
+        this.note = note;
         this.start_date = start_date;
         this.end_date = end_date;
         this.price = price;
@@ -24,20 +22,20 @@ public class ProductGETdata {
         this.image = image;
     }
 
-    public String getFspid() {
-        return fspid;
+    public String getGcpid() {
+        return gcpid;
     }
 
-    public void setFspid(String fspid) {
-        this.fspid = fspid;
+    public void setGcpid(String gcpid) {
+        this.gcpid = gcpid;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getNote() {
+        return note;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public String getStart_date() {
@@ -78,13 +76,5 @@ public class ProductGETdata {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 }

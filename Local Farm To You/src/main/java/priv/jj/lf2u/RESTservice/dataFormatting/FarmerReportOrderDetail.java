@@ -1,19 +1,19 @@
-package priv.jj.lf2u.dataFormatting;
+package priv.jj.lf2u.RESTservice.dataFormatting;
 
 /**
  * Created by adrianoob on 11/22/16.
  */
-public class Order_detail {
+public class FarmerReportOrderDetail {
     private String fspid;
     private String name;
-    private String amount;
+    private String order_size;
     private String price;
     private double line_item_total;
 
-    public Order_detail(String fspid, String name, String amount, String price, double line_item_total) {
+    public FarmerReportOrderDetail(String fspid, String name, String order_size, String price, double line_item_total) {
         this.fspid = fspid;
         this.name = name;
-        this.amount = amount;
+        this.order_size = order_size;
         this.price = price;
         this.line_item_total = line_item_total;
     }
@@ -34,12 +34,12 @@ public class Order_detail {
         this.name = name;
     }
 
-    public String getAmount() {
-        return amount;
+    public String getOrder_size() {
+        return order_size;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount;
+    public void setOrder_size(String order_size) {
+        this.order_size = order_size;
     }
 
     public String getPrice() {

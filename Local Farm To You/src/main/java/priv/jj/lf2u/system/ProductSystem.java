@@ -22,7 +22,7 @@ public enum ProductSystem {
     // CatalogSystem
     private CatalogSystem catalog = CatalogSystem.INSTANCE;
 
-    private ProductSystem() {
+    ProductSystem() {
         products = new ArrayList<>();
         id_counter = 100;
         version_counter = 100;
@@ -101,6 +101,8 @@ public enum ProductSystem {
         return list.toArray(new FarmStoreProduct[list.size()]);
     }
 
+    /* IO Method */
+    public void setProductIO(ProductIOInterface io) { productIO = io; }
     public void clearStoredData() {
         products.clear();
         id_counter = 100;

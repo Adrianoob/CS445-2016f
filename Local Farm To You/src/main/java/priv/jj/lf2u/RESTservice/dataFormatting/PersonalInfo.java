@@ -1,18 +1,19 @@
-package priv.jj.lf2u.dataFormatting;
+package priv.jj.lf2u.RESTservice.dataFormatting;
 
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by adrianoob on 11/22/16.
+ * Created by adrianoob on 10/28/16.
  */
-public class OrderedBy {
+
+@XmlRootElement
+public class PersonalInfo {
     private String name;
     private String email;
     private String phone;
-
-    public OrderedBy(String name, String email, String phone) {
-        this.name = name;
-        this.email = email;
-        this.phone = phone;
+    public PersonalInfo(){}
+    public PersonalInfo(String n, String e, String p) {
+        name = n; email = e; phone = p;
     }
 
     public String getName() {

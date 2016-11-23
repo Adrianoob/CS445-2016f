@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import priv.jj.lf2u.entity.FarmStoreProduct;
 import priv.jj.lf2u.entity.Order;
 
 import java.text.SimpleDateFormat;
@@ -17,13 +16,13 @@ import java.util.Hashtable;
  * Created by adrianoob on 11/20/16.
  */
 public class OrderSystemTest {
-    FarmerSystem fs = FarmerSystem.INSTANCE;
-    ProductSystem ps = ProductSystem.INSTANCE;
-    CatalogSystem ca = CatalogSystem.INSTANCE;
-    CustomerSystem cs = CustomerSystem.INSTANCE;
-    OrderSystem os = OrderSystem.INSTANCE;
-    String today;
-    String tmr;
+    private FarmerSystem fs = FarmerSystem.INSTANCE;
+    private ProductSystem ps = ProductSystem.INSTANCE;
+    private CatalogSystem ca = CatalogSystem.INSTANCE;
+    private CustomerSystem cs = CustomerSystem.INSTANCE;
+    private OrderSystem os = OrderSystem.INSTANCE;
+    private String today;
+    private String tmr;
 
     boolean last_test = false;
 
@@ -41,7 +40,7 @@ public class OrderSystemTest {
         fs.addFarmer("farmer1", "email1@aa.com", "1111111111",
                 "farm1", "address1", "1111111112", "www.farm1.com", new String[]{"60616", "60647"}); // fid = 101
         fs.addFarmer("farmer2", "email2@aa.com", "2222222222",
-                "farm2", "address2", "2222222223", "www.farm2.com", new String[]{"60616", "60606"}); // fid = 102
+                "farm2", "address2", "2222222223", "www.farm2.com", new String[]{"60010", "60606"}); // fid = 102
 
         ca.clearStoredDate();
         ca.addCatalog("Potatoes"); // gcpid = 101
@@ -61,11 +60,13 @@ public class OrderSystemTest {
         // set up
         loadingData();
         os.clearStoredData();
-        os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
-        os.addOrder("101", "101", "N/A", new String[] {"101"}, new double[] {0.5}); // oid = 102
-        os.addOrder("102", "101", "N/A", new String[] {"102"}, new double[] {10}); // oid = 103
-
-        assertEquals("fail to add order for non-existing cid", "-1", os.addOrder("103", "101", "", new String[]{}, new double[]{}));
+        String id;
+        id = os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        assertEquals("order 101 created successfully", "101", id);
+        id = os.addOrder("101", "101", "N/A", new String[] {"101"}, new double[] {0.5}); // oid = 102
+        assertEquals("order 102 created successfully", "102", id);
+        id = os.addOrder("102", "101", "N/A", new String[] {"102"}, new double[] {10}); // oid = 103
+        assertEquals("order 103 created successfully", "103", id);
 
         Order order = os.getOrder("102", "101");
         assertEquals("order 2 correct id", "102", order.getOid());
@@ -73,6 +74,13 @@ public class OrderSystemTest {
         assertEquals("order 2 correct order date", today, order.getOrderDate());
         assertEquals((new double[] {0.5})[0], order.getAmountList()[0], 0);
         assertEquals("order 2 correct status", Order.OPEN, order.getStatus());
+
+        // fail tests
+        assertEquals("fail to add order for non-existing cid", "-1", os.addOrder("103", "101", "", new String[]{}, new double[]{}));
+        assertEquals("fail to add order for non-existing fid", "-1", os.addOrder("102", "103", "", new String[]{}, new double[]{}));
+        assertEquals("fail to add order for unmatched zip code", "0", os.addOrder("102", "102", "", new String[]{}, new double[]{}));
+        assertEquals("fail to add order for unmatched farm and product", "-1", os.addOrder("102", "102", "", new String[]{"101"}, new double[]{1.2}));
+
     }
 
     @Test
@@ -150,9 +158,10 @@ public class OrderSystemTest {
     @Test
     public void searchTest() {
         os.clearStoredData();
+        loadingData();
         os.addOrder("101", "101", "thank", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
-        os.addOrder("101", "101", "Thank You", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
-        os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        os.addOrder("101", "101", "Thank You", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 102
+        os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 103
 
         assertEquals("search test 1", 3, os.ordersByKeyword("").length);
         assertEquals("search test 2", 1, os.ordersByKeyword("102").length);
@@ -161,6 +170,67 @@ public class OrderSystemTest {
         assertEquals("search test 5", 3, os.ordersByKeyword("a").length);
 
 
+    }
+
+    @Test
+    public void orderStatusTest() {
+        os.clearStoredData();
+        loadingData();
+        os.addOrder("101", "101", "thank", new String[] {"101"}, new double[] {1}); // oid = 101
+
+        boolean worked;
+        Order or = os.getOrder("101", "101");
+        assertEquals("Status Open initially", Order.OPEN, or.getStatus());
+        worked = os.cancelOrder("101", "101");
+        assertEquals("Cancellation takes effect", true, worked);
+        assertEquals("Status is cancelled", Order.CANCELLED, or.getStatus());
+        worked = os.cancelOrder("101", "101");
+        assertEquals("can't cancel cancelled order", false, worked);
+        assertEquals("Status is cancelled", Order.CANCELLED, or.getStatus());
+        worked = os.confirmDelivery("101");
+        assertEquals("can't confirm cancelled order", false, worked);
+        assertEquals("Status is cancelled", Order.CANCELLED, or.getStatus());
+
+        String a = os.addOrder("102", "101", "thank", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 102
+        or = os.getOrder("102", "102");
+        assertEquals("Status Open initially", Order.OPEN, or.getStatus());
+        worked = os.confirmDelivery("102");
+        assertEquals("Cancellation takes effect", true, worked);
+        assertEquals("Status is cancelled", Order.DELIVERED, or.getStatus());
+        worked = os.cancelOrder("102", "102");
+        assertEquals("can't cancel delivered order", false, worked);
+        assertEquals("Status is delivered", Order.DELIVERED, or.getStatus());
+        worked = os.confirmDelivery("102");
+        assertEquals("can't confirm delivered order", false, worked);
+        assertEquals("Status is delivered", Order.DELIVERED, or.getStatus());
+
+    }
+
+    @Test
+    public void ordersByDateTest() {
+        // set up
+        os.clearStoredData();
+        loadingData();
+        os.addOrder("101", "101", "thank", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        os.addOrder("101", "101", "Thank You", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 102
+        os.addOrder("102", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 103
+
+        Order[] ors = os.ordersToDeliverTodayByFid("101");
+        assertEquals("get correct orders", 0, ors.length);
+        ors = os.ordersToDeliverTomorrowByFid("101");
+        assertEquals("get correct orders", 3, ors.length);
+
+        ors = os.ordersByCustomerOfCid("101");
+        assertEquals("get correct orders", 2, ors.length);
+        ors = os.ordersByCustomerOfCid("102");
+        assertEquals("get correct orders", 1, ors.length);
+
+        ors = os.allOrdersPlacedToday();
+        assertEquals("get correct orders", 3, ors.length);
+        ors = os.allOrdersLastMonth();
+        assertEquals("get correct orders", 0, ors.length);
+        ors = os.allOrdersPlacedYesterday();
+        assertEquals("get correct orders", 0, ors.length);
     }
 
     @Test

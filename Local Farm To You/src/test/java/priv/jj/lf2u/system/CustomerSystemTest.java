@@ -26,6 +26,7 @@ public class CustomerSystemTest {
         assertEquals("fid is correct", "102", cid);
 
         Customer c = cs.customerOfCid(cid);
+        assertNotNull("customer is not null", c);
         assertEquals("find wanted customer", "name2", c.getName());
     }
 
@@ -41,6 +42,7 @@ public class CustomerSystemTest {
         assertEquals("cid not exist", true, cs.setCustomer("103", "newName3", "newEmail3@aa.com", "3303303330", "3 New Road", "315003"));
 
         Customer c = cs.customerOfCid("103");
+        assertNotNull("customer not null", c);
         assertEquals("email is changed corrected", "newEmail3@aa.com", c.getEmail());
     }
 
@@ -54,6 +56,7 @@ public class CustomerSystemTest {
 
         assertEquals("search test 1", 0, cs.customersByKeyword("123").length);
         assertEquals("search test 2", 3, cs.customersByKeyword("").length);
+        assertEquals("search test 2", 3, cs.customersByKeyword(null).length);
         assertEquals("search test 3", 3, cs.customersByKeyword(".com").length);
         assertEquals("search test 4", 2, cs.customersByKeyword("ichi").length);
         assertEquals("search test 5", 2, cs.customersByKeyword("road").length);
@@ -62,8 +65,9 @@ public class CustomerSystemTest {
 
     @Test
     public void persistenceTest() {
-        Customer farmer = cs.customerOfCid("103");
-        assertEquals("customer stored in local is found", "email3@aa.com", farmer.getEmail());
+        Customer cus = cs.customerOfCid("103");
+        assertNotNull("customer not null", cus);
+        assertEquals("customer stored in local is found", "email3@aa.com", cus.getEmail());
 
         last_test = true;
     }

@@ -1,29 +1,20 @@
-package priv.jj.lf2u.dataFormatting;
+package priv.jj.lf2u.RESTservice.dataFormatting;
+
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Created by adrianoob on 11/22/16.
+ * Created by adrianoob on 10/28/16.
  */
-public class Farm_info {
-    private String fid;
+
+@XmlRootElement
+public class FarmInfo {
     private String name;
     private String address;
     private String phone;
     private String web;
-
-    public Farm_info(String fid, String name, String address, String phone, String web) {
-        this.fid = fid;
-        this.name = name;
-        this.address = address;
-        this.phone = phone;
-        this.web = web;
-    }
-
-    public String getFid() {
-        return fid;
-    }
-
-    public void setFid(String fid) {
-        this.fid = fid;
+    public FarmInfo() {}
+    public FarmInfo(String n, String a, String p, String w) {
+        name = n; address = a; phone = p; web = w;
     }
 
     public String getName() {

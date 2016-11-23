@@ -110,9 +110,22 @@ public class FarmerSystemTest {
     }
 
     @Test
+    public void deliveryChargeTest() {
+        /* set up */
+        fs.clearStoredData();
+        fs.addFarmer("abc", "hh@aa.com", "131-232-4323",
+                "ABC's Farm", "Fa's Road", "131-232-4323", "www.abc.com", new String[]{"60616", "60647"});
+        Farmer f = fs.farmerOfFid("101");
+        assertEquals("delivery charge is 0", 0, f.getDeliveryCharge(), 0);
+        fs.updateDeliveryCharge(f.getFid(), 9.95);
+        assertEquals("delivery charge has changed", 9.95, f.getDeliveryCharge(), 0);
+    }
+
+    @Test
     public void persistenceTest() {
         Farmer farmer = fs.farmerOfFid("101");
         assertEquals("farmer stored in local is found", "name1", farmer.getPersonName());
+        assertEquals("delivery charge is old as before", 5, farmer.getDeliveryCharge(), 0);
         farmer = fs.farmerOfFid("102");
         assertEquals("farmer stored in local is found", "1", farmer.getPersonName());
 
@@ -129,6 +142,7 @@ public class FarmerSystemTest {
             fs.addFarmer("name2", "email2@aa.com", "2222222222",
                     "farm2", "address2", "2222222223", "www.farm2.com", new String[]{"60616", "60606"});
             fs.setFarmer("102","1", "1", "1", "1", "1", "1", "1", new String[]{});
+            fs.updateDeliveryCharge("101", 5.00);
         }
     }
 }

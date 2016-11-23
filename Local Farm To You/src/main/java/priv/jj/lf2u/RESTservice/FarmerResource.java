@@ -1,9 +1,9 @@
 package priv.jj.lf2u.RESTservice;
 import com.google.gson.Gson;
-import priv.jj.lf2u.dataFormatting.FarmerData;
-import priv.jj.lf2u.dataFormatting.FarmerReportOrderFormat;
-import priv.jj.lf2u.dataFormatting.ProductGETdata;
-import priv.jj.lf2u.dataFormatting.ProductPOSTdata;
+import priv.jj.lf2u.RESTservice.dataFormatting.FarmerData;
+import priv.jj.lf2u.RESTservice.dataFormatting.FarmerReportOrderFormat;
+import priv.jj.lf2u.RESTservice.dataFormatting.ProductGETdata;
+import priv.jj.lf2u.RESTservice.dataFormatting.ProductPOSTdata;
 import priv.jj.lf2u.entity.FarmStoreProduct;
 import priv.jj.lf2u.entity.Farmer;
 import priv.jj.lf2u.entity.Order;
@@ -110,16 +110,15 @@ public class FarmerResource {
     @POST @Path("/{fid}/delivery_charge")
     // 204no_content 400bad_request for bad data
     public Response updateDeliveryChargeOfFid(@PathParam("fid") String fid, String str) {
-        // validate fid
-        Farmer farmer = fs.farmerOfFid(fid);
-        if (farmer == null) return Response.status(Response.Status.NOT_FOUND).build();
-
         // validate POST-ed data
         try {
             Hashtable<String, Double> data = gson.fromJson(str, Hashtable.class);
             Double number = data.get("delivery_charge");
-            fs.updateDeliveryCharge(fid, number);
-            return Response.noContent().build();
+            boolean success = fs.updateDeliveryCharge(fid, number);
+            if (success)
+                return Response.noContent().build();
+            else
+                return Response.status(Response.Status.NOT_FOUND).build();
         }
         catch (ClassCastException | NullPointerException e) {
             // data is mal-formatted
@@ -208,12 +207,12 @@ public class FarmerResource {
         if (farmer == null) return Response.status(Response.Status.NOT_FOUND).build();
 
         if (frid.equals("701")) {
-            Order [] orders = os.ordersTodayByFid(fid);
+            Order [] orders = os.ordersToDeliverTodayByFid(fid);
             FarmerReportOrderFormat data = new FarmerReportOrderFormat("701", "Orders to deliver today", orders);
             return Response.ok().entity(gson.toJson(data)).build();
         }
         else if (frid.equals("702")) {
-            Order [] orders = os.ordersTomorrowByFid(fid);
+            Order [] orders = os.ordersToDeliverTomorrowByFid(fid);
             FarmerReportOrderFormat data = new FarmerReportOrderFormat("702", "Orders to deliver tomorrow", orders);
             return Response.ok().entity(gson.toJson(data)).build();
         }
