@@ -1,110 +1,115 @@
 package priv.jj.lf2u.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Set;
+import java.util.StringTokenizer;
 
 /**
  * Farmer
  */
 public class Farmer implements Serializable {
-    private String fid; // farmer id
-    private String name; // farm name
-    private String address; // farm address
-    private String phone; // farm phone
-    private String web;
-    private String [] deliversTo;
-    private String personName;
-    private String personEmail;
-    private String personPhone;
-    private double deliveryCharge;
+    private Hashtable<String, String> info; // this is searchable;
+// hidden attributes in info Hashtable
+// String fid; // farmer id
+// String name; // farm name
+// String address; // farm address
+// String phone; // farm phone
+// String web;
+// String [] deliversTo;
+// String personName;
+// String personEmail;
+// String personPhone;
+// double deliveryCharge;
 
     public Farmer(String n, String e, String p,
                   String farmer_name, String addres, String farm_phone, String webb, String [] zips) {
+        info = new Hashtable<>();
         setFarmerInfo(n, e, p, farmer_name, addres, farm_phone, webb, zips);
-        deliveryCharge = 0;
+        info.put("deliveryCharge", "0");
+        // FIXME: 11/22/16 deliverycharge is not stored well
     }
 
     public void setFarmerInfo(String n, String e, String p,
                               String farmer_name, String addres, String farm_phone, String webb, String [] zips) {
-        personEmail = e;
-        personName = n;
-        personPhone = p;
-        name = farmer_name;
-        address = addres;
-        phone = farm_phone;
-        web = webb;
-        deliversTo = new String[zips.length];
-        System.arraycopy(zips, 0, deliversTo, 0, zips.length);
+        info.put("personEmail", e);
+        info.put("personName", n);
+        info.put("personPhone", p);
+        info.put("name", farmer_name);
+        info.put("address", addres);
+        info.put("phone", farm_phone);
+        info.put("web", webb);
+        String temp = "";
+        for (String z : zips) {
+            temp = temp + "," + z;
+        }
+        if (temp.equals("")) temp = "";
+        else temp = temp.substring(1, temp.length());
+        info.put("deliversTo", temp);
     }
 
-    public Hashtable<String, String> createHashTable() {
-        Hashtable<String, String> table = new Hashtable<>();
-        table.put("fid",     fid);
-        table.put("name",    name);
-        table.put("address", address);
-        table.put("phone",   phone);
-        table.put("web",     web);
-        table.put("personName", personName);
-        table.put("personEmail",personEmail);
-        table.put("personPhone",personPhone);
-
-        String zip = "";
-        if (deliversTo.length > 0) {
-            zip = deliversTo[0];
-            if (deliversTo.length > 1) {
-                for (int i = 1; i < deliversTo.length; i++) {
-                    zip = zip + "," + deliversTo[i];
-                }
-            }
+    public boolean hasKeyword(String keyword) {
+        Set<String> keys = info.keySet();
+        for (String key : keys) {
+            String value = info.get(key);
+            if (value.toLowerCase().contains(keyword.toLowerCase()))
+                return true;
         }
-        table.put("deliversTo", zip);
-
-        return table;
+        return false;
     }
 
     public String getPersonName() {
-        return personName;
+        return info.get("personName");
     }
 
     public String getPersonEmail() {
-        return personEmail;
+        return info.get("personEmail");
     }
 
     public String getPersonPhone() {
-        return personPhone;
+        return info.get("personPhone");
     }
 
     public String getName() {
-        return name;
+        return info.get("name");
     }
 
     public String getAddress() {
-        return address;
+        return info.get("address");
     }
 
     public String getPhone() {
-        return phone;
+        return info.get("phone");
     }
 
     public String getWeb() {
-        return web;
+        return info.get("web");
     }
 
     public String [] getDeliversTo() {
-        return deliversTo;
+        String deliversTo = info.get("deliversTo");
+        if (deliversTo.equals("")) return new String[]{};
+
+        StringTokenizer t = new StringTokenizer(deliversTo, ",");
+        ArrayList<String> zlist = new ArrayList<>();
+        while (t.hasMoreTokens()) {
+            zlist.add(t.nextToken());
+        }
+        return zlist.toArray(new String[zlist.size()]);
     }
 
 
     public String getFid() {
-        return fid;
+        return info.get("fid");
     }
 
     public void setFid(String id) {
-        fid = id;
+        info.put("fid", id);
     }
 
     public boolean deliversTo(String zip) {
-        for (String z : deliversTo) {
+        for (String z : getDeliversTo()) {
             if (z.equals(zip))
                 return true;
         }
@@ -112,11 +117,11 @@ public class Farmer implements Serializable {
     }
 
     public void setDeliveryCharge(double deliveryCharge) {
-        this.deliveryCharge = deliveryCharge;
+        info.put("deliveryCharge", ""+deliveryCharge);
     }
 
     public double getDeliveryCharge() {
-        return this.deliveryCharge;
+        return Double.parseDouble(info.get("deliveryCharge"));
     }
 
 

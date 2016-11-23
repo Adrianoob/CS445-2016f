@@ -30,4 +30,11 @@ public class SystemResource {
         ProductSystem.INSTANCE.clearStoredData();
         return Response.ok().build();
     }
+
+    @GET @Path("delete_order_data")
+    // 200
+    public Response deleteOrderData() {
+        OrderSystem.INSTANCE.clearStoredData();
+        return Response.ok().build();
+    }
 }

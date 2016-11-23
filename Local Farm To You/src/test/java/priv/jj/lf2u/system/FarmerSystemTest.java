@@ -90,6 +90,26 @@ public class FarmerSystemTest {
     }
 
     @Test
+    public void searchTest() {
+        /* set up */
+        fs.clearStoredData();
+        fs.addFarmer("abc", "hh@aa.com", "131-232-4323",
+                "ABC's Farm", "Fa's Road", "131-232-4323", "www.abc.com", new String[]{"60616", "60647"});
+        fs.addFarmer("Will", "will123@gg.com", "667-768-9878",
+                "Freshest Market", "Main Street", "667-768-9878", "www.will.com", new String[]{"60616", "60606"});
+        fs.addFarmer("Seth", "seth@gmail.com", "555-555-5555",
+                "Vegan World", "Main Street", "555-555-5555", "www.seth.com", new String[]{"60606", "60647", "60616"});
+
+        assertEquals("search test 1", 3, fs.farmersByKeyword("@").length);
+        assertEquals("search test 2", 3, fs.farmersByKeyword("www").length);
+        assertEquals("search test 3", 1, fs.farmersByKeyword("abc's").length);
+        assertEquals("search test 4", 0, fs.farmersByKeyword("--").length);
+        assertEquals("search test 5", 3, fs.farmersByKeyword("").length);
+        assertEquals("search test 6", 3, fs.farmersByKeyword("60616").length);
+        assertEquals("search test 6", 2, fs.farmersByKeyword("60606").length);
+    }
+
+    @Test
     public void persistenceTest() {
         Farmer farmer = fs.farmerOfFid("101");
         assertEquals("farmer stored in local is found", "name1", farmer.getPersonName());

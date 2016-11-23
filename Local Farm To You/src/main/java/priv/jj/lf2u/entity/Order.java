@@ -2,15 +2,19 @@ package priv.jj.lf2u.entity;
 
 import java.io.Serializable;
 import java.util.Calendar;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
  * Created by adrianoob on 11/20/16.
  */
 public class Order implements Serializable {
     private String oid;
+    private String delivery_note;
+
     private Customer customer;
     private Farmer farmer;
-    private String delivery_note;
     private FarmStoreProduct [] productList;
     private double [] amountList;
 //    private int [] versionList;
@@ -33,6 +37,10 @@ public class Order implements Serializable {
         actuallyDeliveryDate = null;
     }
 
+    public boolean hasKeyword(String keyword) {
+        return oid.toLowerCase().equals(keyword.toLowerCase()) || delivery_note.toLowerCase().contains(keyword.toLowerCase());
+    }
+
     public boolean confirmDelivery() {
         if (status == OPEN) {
             actuallyDeliveryDate = Calendar.getInstance();
@@ -51,9 +59,9 @@ public class Order implements Serializable {
     }
 
     /* status code */
-    public static int OPEN = 1;
-    public static int DELIVERED = 2;
-    public static int CANCELLED = 3;
+    public static final int OPEN = 1;
+    public static final int DELIVERED = 2;
+    public static final int CANCELLED = 3;
 
     /* getters and setters */
 
@@ -93,6 +101,11 @@ public class Order implements Serializable {
 //        this.versionList = versionList;
 //    }
 
+
+    public FarmStoreProduct[] getProductList() {
+        return productList;
+    }
+
     public double getDeliveryCharge() {
         return deliveryCharge;
     }
@@ -107,6 +120,16 @@ public class Order implements Serializable {
 
     public int getStatus() {
         return status;
+    }
+
+    public String getStatusInfo() {
+        String i = "";
+        switch (status) {
+            case OPEN: i = "open"; break;
+            case DELIVERED: i = "delivered"; break;
+            case CANCELLED: i = "cancelled"; break;
+        }
+        return i;
     }
 
     public String getOrderDate() {
@@ -124,7 +147,7 @@ public class Order implements Serializable {
     }
 
     public String getActuallyDeliveryDate() {
-        if (actuallyDeliveryDate == null) return null;
+        if (actuallyDeliveryDate == null) return "";
 
         int yyyy = actuallyDeliveryDate.get(Calendar.YEAR);
         int mm = actuallyDeliveryDate.get(Calendar.MONTH) + 1;
@@ -138,5 +161,20 @@ public class Order implements Serializable {
             sum += productList[i].getPrice() * amountList[i];
         }
         return sum;
+    }
+
+    public double ordertotal() {
+        return productTotal() + deliveryCharge;
+    }
+
+    public LinkedHashMap<String, String> getFormattedInfo() {
+        LinkedHashMap<String, String> data = new LinkedHashMap<>();
+        data.put("oid", oid);
+        data.put("order_data", getOrderDate());
+        data.put("planned_delivery_date", getPlannedDeliveryDate());
+        data.put("actual_delivery_date", getActuallyDeliveryDate());
+        data.put("status", getStatusInfo());
+        data.put("fid", getFid());
+        return data;
     }
 }

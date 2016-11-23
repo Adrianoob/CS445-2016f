@@ -1,11 +1,13 @@
 package priv.jj.lf2u.RESTservice;
 import com.google.gson.Gson;
 import priv.jj.lf2u.dataFormatting.FarmerData;
+import priv.jj.lf2u.dataFormatting.FarmerReportOrderFormat;
 import priv.jj.lf2u.dataFormatting.ProductGETdata;
 import priv.jj.lf2u.dataFormatting.ProductPOSTdata;
 import priv.jj.lf2u.entity.FarmStoreProduct;
 import priv.jj.lf2u.entity.Farmer;
 import priv.jj.lf2u.entity.Order;
+import priv.jj.lf2u.persistence.FarmerReport3Format;
 import priv.jj.lf2u.system.FarmerSystem;
 import priv.jj.lf2u.system.OrderSystem;
 import priv.jj.lf2u.system.ProductSystem;
@@ -79,7 +81,7 @@ public class FarmerResource {
     }
 
     @GET
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.APPLICATION_JSON)
     // 200ok
     public Response getFarmersOfZip(@QueryParam("zip") String zip) {
         Farmer [] farmers = fs.farmersOfZip(zip);
@@ -200,13 +202,27 @@ public class FarmerResource {
     @GET @Path("/{fid}/reports/{frid}")
     @Produces(MediaType.APPLICATION_JSON)
     // 200ok 404nf
-    public Response generateReport(@PathParam("fid") String fid, @PathParam("frid") String frid) {
+    public Response generateReport(@PathParam("fid") String fid, @PathParam("frid") String frid,
+                                    @QueryParam("start_date") String start, @QueryParam("end_date") String end) {
         Farmer farmer = fs.farmerOfFid(fid);
         if (farmer == null) return Response.status(Response.Status.NOT_FOUND).build();
 
         if (frid.equals("701")) {
             Order [] orders = os.ordersTodayByFid(fid);
+            FarmerReportOrderFormat data = new FarmerReportOrderFormat("701", "Orders to deliver today", orders);
+            return Response.ok().entity(gson.toJson(data)).build();
         }
-        return null;
+        else if (frid.equals("702")) {
+            Order [] orders = os.ordersTomorrowByFid(fid);
+            FarmerReportOrderFormat data = new FarmerReportOrderFormat("702", "Orders to deliver tomorrow", orders);
+            return Response.ok().entity(gson.toJson(data)).build();
+        }
+        else if (frid.equals("703")) {
+            if (start == null || end == null) return Response.status(Response.Status.BAD_REQUEST).build();
+            Order [] orders = os.ordersByDates(fid, start, end);
+            FarmerReport3Format report = new FarmerReport3Format(orders, start, end);
+            return Response.ok().entity(gson.toJson(report)).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }

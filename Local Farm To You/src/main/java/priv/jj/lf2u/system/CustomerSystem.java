@@ -68,6 +68,17 @@ public enum CustomerSystem {
         return null;
     }
 
+    public Customer [] customersByKeyword(String keyword) {
+        ArrayList<Customer> cus = new ArrayList<>();
+        if (keyword == null || keyword.equals("")) { cus = customers; }
+        else {
+            for (Customer c : customers) {
+                if (c.hasKeyword(keyword)) cus.add(c);
+            }
+        }
+        return cus.toArray(new Customer[cus.size()]);
+    }
+
     public void clearStoredData() {
         id_counter = 100;
         customers.clear();

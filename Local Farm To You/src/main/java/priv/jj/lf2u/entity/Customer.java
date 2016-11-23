@@ -1,77 +1,96 @@
 package priv.jj.lf2u.entity;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Set;
 
 /**
  * Created by adrianoob on 10/27/16.
  */
 public class Customer implements Serializable {
-    private String cid; // customer id
-    private String zip;
-    private String street;
-    private String name;
-    private String email;
-    private String phone;
+    private LinkedHashMap<String, String> info; // searchable attribtes hide here
+    // String cid; // customer id
+    // String zip;
+    // String street;
+    // String name;
+    // String email;
+    // String phone;
 
     public Customer(String n, String e, String p, String stree, String zi) {
+        info = new LinkedHashMap<>();
         setCustomerInfo(n, e, p, stree, zi);
     }
 
     public void setCustomerInfo(String n, String e, String p, String s, String z) {
-        name = n;
-        email = e;
-        phone = p;
-        street = s;
-        zip = z;
+        info.put("cid", "not-set");
+        info.put("name", n);
+        info.put("street", s);
+        info.put("zip", z);
+        info.put("phone", p);
+        info.put("email", e);
+    }
+
+    public boolean hasKeyword(String keyword) {
+        Set<String> keys = info.keySet();
+        for (String key : keys) {
+            String value = info.get(key);
+            if (value.toLowerCase().contains(keyword.toLowerCase()))
+                return true;
+        }
+        return false;
     }
 
     /* getters and setters */
 
     public String getCid() {
-        return cid;
+        return info.get("cid");
     }
 
     public void setCid(String cid) {
-        this.cid = cid;
+        info.put("cid", cid);
     }
 
     public String getZip() {
-        return zip;
+        return info.get("zip");
     }
 
     public void setZip(String zip) {
-        this.zip = zip;
+        info.put("zip", zip);
     }
 
     public String getStreet() {
-        return street;
+        return info.get("street");
     }
 
     public void setStreet(String street) {
-        this.street = street;
+        info.put("street", street);
     }
 
     public String getName() {
-        return name;
+        return info.get("name");
     }
 
     public void setName(String name) {
-        this.name = name;
+        info.put("name", name);
     }
 
     public String getEmail() {
-        return email;
+        return info.get("email");
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        info.put("email", email);
     }
 
     public String getPhone() {
-        return phone;
+        return info.get("phone");
     }
 
     public void setPhone(String phone) {
-        this.phone = phone;
+        info.put("phone", phone);
+    }
+
+    public LinkedHashMap<String, String> getFormattedInfo() {
+        return info;
     }
 }

@@ -48,28 +48,33 @@ public enum OrderSystem {
 
 
     /* public methods */
-    public boolean addOrder(String cid, String fid, String delivery_note, String[] fspidList, double[] amountList) {
+    public String addOrder(String cid, String fid, String delivery_note, String[] fspidList, double[] amountList) {
         Farmer farmer = fs.farmerOfFid(fid);
-        if (farmer == null) return false;
+        if (farmer == null) return "-1";
 
         Customer customer = cs.customerOfCid(cid);
-        if (customer == null) return false;
+        if (customer == null) return "-1";
 
         FarmStoreProduct [] proList = new FarmStoreProduct[fspidList.length];
-//        int [] versions = new int[fspidList.length];
         for (int i = 0; i < fspidList.length; i++) {
             FarmStoreProduct product = ps.productOfId_newestVersion(fspidList[i], fid);
-            if (product == null) return false;
-//            versions[i] = product.getVersion();
+            if (product == null) return "-1";
             proList[i] = product;
         }
+
+        String z = customer.getZip();
+        String [] zs = farmer.getDeliversTo();
+        boolean is_local = false;
+        for (String s : zs) { if (s.equals(z)) is_local = true; break; }
+        if (!is_local) return "0";
+
         Order order = new Order(customer, farmer, delivery_note, proList, amountList);
-        order.setOid("" + ++id_counter);
+        String oid = "" + ++id_counter;
+        order.setOid(oid);
         order.setDeliveryCharge(farmer.getDeliveryCharge());
-//        order.setVersionList(versions);
         orders.add(order);
         orderIO.addOrder(order);
-        return true;
+        return oid;
     }
 
     public Order [] ordersTodayByFid(String fid) {
@@ -102,6 +107,30 @@ public enum OrderSystem {
         return list.toArray(new Order[list.size()]);
     }
 
+    public Order [] ordersByKeyword(String keyword) {
+        ArrayList<Order> list = new ArrayList<>();
+        if (keyword == null || keyword.equals("")) { list = orders; }
+        else {
+            for (Order o : orders) {
+                if (o.hasKeyword(keyword)) list.add(o);
+            }
+        }
+        return list.toArray(new Order[list.size()]);
+    }
+
+    public Order [] ordersByDates(String fid, String start, String end) {
+        ArrayList<Order> list = new ArrayList<>();
+        for (Order o : orders) {
+            if (o.getFid().equals(fid)) {
+                int d = Integer.parseInt(o.getOrderDate());
+                int st = Integer.parseInt(start);
+                int en = Integer.parseInt(end);
+                if (d <= en && d >= st) list.add(o);
+            }
+        }
+        return list.toArray(new Order[list.size()]);
+    }
+
     public Order getOrder(String oid, String cid) {
         for (Order o : orders) {
             if (o.getOid().equals(oid) && o.getCid().equals(cid))
@@ -119,13 +148,52 @@ public enum OrderSystem {
         return isSuccessful;
     }
 
-    public boolean confirmDelivery(String oid, String cid) {
-        Order o = getOrder(oid, cid);
+    public boolean confirmDelivery(String oid) {
+        Order o = null;
+        for (Order or : orders) { if (or.getOid().equals(oid)) {o = or; break;}}
         if (o == null) return false;
 
         boolean isSuccessful = o.confirmDelivery();
         if (isSuccessful) orderIO.changeOrder(o);
         return isSuccessful;
+    }
+
+    public Order [] allOrdersPlacedToday() {
+        ArrayList<Order> list = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        String today = format.format(Calendar.getInstance().getTime());
+        for (Order o : orders) {
+            if (o.getOrderDate().equals(today)) list.add(o);
+        }
+        return list.toArray(new Order[list.size()]);
+    }
+
+    public Order [] allOrdersPlacedYesterday() {
+        ArrayList<Order> list = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.roll(Calendar.DATE, -1);
+        String yesterday = format.format(calendar.getTime());
+        for (Order o : orders) {
+            if (o.getPlannedDeliveryDate().equals(yesterday)) list.add(o);
+        }
+        return list.toArray(new Order[list.size()]);
+    }
+
+    public Order [] allOrdersLastMonth() {
+        ArrayList<Order> list = new ArrayList<>();
+        SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DATE, 1); calendar.roll(Calendar.DATE, -1);
+        int end = Integer.parseInt((format.format(calendar.getTime())));
+        calendar.set(Calendar.DATE, 1);
+        int start = Integer.parseInt((format.format(calendar.getTime())));
+
+        for (Order o : orders) {
+            int date = Integer.parseInt(o.getOrderDate());
+            if (date >= start && date <= end) list.add(o);
+        }
+        return list.toArray(new Order[list.size()]);
     }
 
     public void clearStoredData() {

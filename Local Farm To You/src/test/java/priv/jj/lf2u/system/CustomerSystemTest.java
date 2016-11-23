@@ -45,6 +45,22 @@ public class CustomerSystemTest {
     }
 
     @Test
+    public void searchTest() {
+        /* set up */
+        cs.clearStoredData();
+        cs.addCustomer("Will", "will@aa.com", "1111111111", "Michigen Ave.", "60616");
+        cs.addCustomer("Sam", "sam@bb.com", "2222222222", "Michigen road.", "60616");
+        cs.addCustomer("Dion", "dion@cc.com", "3333333333", "Sang road.", "315000");
+
+        assertEquals("search test 1", 0, cs.customersByKeyword("123").length);
+        assertEquals("search test 2", 3, cs.customersByKeyword("").length);
+        assertEquals("search test 3", 3, cs.customersByKeyword(".com").length);
+        assertEquals("search test 4", 2, cs.customersByKeyword("ichi").length);
+        assertEquals("search test 5", 2, cs.customersByKeyword("road").length);
+        assertEquals("search test 6", 2, cs.customersByKeyword("6061").length);
+    }
+
+    @Test
     public void persistenceTest() {
         Customer farmer = cs.customerOfCid("103");
         assertEquals("customer stored in local is found", "email3@aa.com", farmer.getEmail());

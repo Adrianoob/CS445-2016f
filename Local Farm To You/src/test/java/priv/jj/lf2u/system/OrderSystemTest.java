@@ -48,8 +48,8 @@ public class OrderSystemTest {
         ca.addCatalog("Eggplant"); // gcpid = 102;
 
         ps.clearStoredData();
-        ps.addProduct("101", "102", "note", "start", "end", 12, "unit", "image"); // fspid = 101
-        ps.addProduct("101", "101", "note", "start", "end", 25, "unit", "image"); // fspid = 102
+        ps.addProduct("101", "102", "note", "", "", 12, "unit", "image"); // fspid = 101
+        ps.addProduct("101", "101", "note", "", "", 25, "unit", "image"); // fspid = 102
 
         cs.clearStoredData();
         cs.addCustomer("cus1", "cus1e@aa.com", "1111111111", "Michigen Ave.", "60616"); // cid = 101
@@ -65,7 +65,7 @@ public class OrderSystemTest {
         os.addOrder("101", "101", "N/A", new String[] {"101"}, new double[] {0.5}); // oid = 102
         os.addOrder("102", "101", "N/A", new String[] {"102"}, new double[] {10}); // oid = 103
 
-        assertEquals("fail to add order for non-existing cid", false, os.addOrder("103", "101", "", new String[]{}, new double[]{}));
+        assertEquals("fail to add order for non-existing cid", "-1", os.addOrder("103", "101", "", new String[]{}, new double[]{}));
 
         Order order = os.getOrder("102", "101");
         assertEquals("order 2 correct id", "102", order.getOid());
@@ -145,6 +145,22 @@ public class OrderSystemTest {
         os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
         order = os.getOrder("102", "101");
         assertEquals("new price will affect new order's total", 63, order.productTotal(), 0);
+    }
+
+    @Test
+    public void searchTest() {
+        os.clearStoredData();
+        os.addOrder("101", "101", "thank", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        os.addOrder("101", "101", "Thank You", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+        os.addOrder("101", "101", "N/A", new String[] {"101", "102"}, new double[] {1, 2}); // oid = 101
+
+        assertEquals("search test 1", 3, os.ordersByKeyword("").length);
+        assertEquals("search test 2", 1, os.ordersByKeyword("102").length);
+        assertEquals("search test 3", 1, os.ordersByKeyword("thank ").length);
+        assertEquals("search test 4", 0, os.ordersByKeyword("100").length);
+        assertEquals("search test 5", 3, os.ordersByKeyword("a").length);
+
+
     }
 
     @Test

@@ -122,11 +122,23 @@ public enum FarmerSystem {
         return choice.toArray(new Farmer[choice.size()]);
     }
 
+    public Farmer[] farmersByKeyword(String keyword) {
+        ArrayList<Farmer> list = new ArrayList<>();
+        if (keyword == null || keyword.equals("")) {
+            list = this.farmers;
+        } else {
+            for (Farmer f :farmers) {
+                if (f.hasKeyword(keyword)) list.add(f);
+            }
+        }
+        return list.toArray(new Farmer[list.size()]);
+    }
+
     public boolean updateDeliveryCharge(String fid, double deliv) {
         Farmer far = farmerOfFid(fid);
         if (far == null) return false;
-
         far.setDeliveryCharge(deliv);
+        farmerIO.setFarmer(far);
         return true;
     }
 

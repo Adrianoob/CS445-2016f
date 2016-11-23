@@ -10,12 +10,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class FarmerData {
+    private String fid;
     private FarmInfo farm_info;
     private PersonalInfo personal_info;
     private String [] delivers_to;
     private FarmerData() {}
 
     public FarmerData(Farmer f) {
+        fid = f.getFid();
         farm_info = new FarmInfo(f.getName(), f.getAddress(), f.getPhone(), f.getWeb());
         personal_info = new PersonalInfo(f.getPersonName(), f.getPersonEmail(), f.getPersonPhone());
         delivers_to = f.getDeliversTo();
